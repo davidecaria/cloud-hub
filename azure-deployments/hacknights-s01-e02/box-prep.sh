@@ -22,7 +22,8 @@ apt-get autoclean -y
 
 echo "[*] Installing XFCE desktop environment..."
 echo "lightdm shared/default-x-display-manager select lightdm" | sudo debconf-set-selections
-sudo DEBIAN_FRONTEND=noninteractive apt install -y kali-desktop-xfce lightdm
+sudo DEBIAN_FRONTEND=noninteractive apt install -y kali-desktop-xfce
+sudo DEBIAN_FRONTEND=noninteractive apt install -y lightdm
 
 echo "[*] Enabling and starting XRDP service..."
 sudo DEBIAN_FRONTEND=noninteractive apt install xrdp
