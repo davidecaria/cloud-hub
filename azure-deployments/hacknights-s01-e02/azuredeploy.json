@@ -132,7 +132,7 @@
             "computerName": "[variables('vmName')]",
             "adminUsername": "[parameters('adminUsername')]",
             "adminPassword": "[parameters('adminPassword')]",
-            "customData": "[base64(concat('#!/bin/bash\nwget https://github.com/davidecaria/cloud-hub/blob/main/azure-deployments/hacknights-s01-e02/box-prep.sh -O /tmp/prep-box.sh\nchmod +x /tmp/prep-box.sh\n/tmp/prep-box.sh'))]"
+            "customData": "[base64(concat('#!/bin/bash\nwget https://raw.githubusercontent.com/davidecaria/cloud-hub/refs/heads/main/azure-deployments/hacknights-s01-e02/box-prep.sh -O /tmp/prep-box.sh\nchmod +x /tmp/prep-box.sh\n/tmp/prep-box.sh'))]"
           },
           "networkProfile": {
             "networkInterfaces": [
