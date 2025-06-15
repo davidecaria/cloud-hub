@@ -1,0 +1,187 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+      "adminUsername": {
+        "type": "string",
+        "defaultValue": "root"
+      },
+      "adminPassword": {
+        "type": "secureString",
+        "metadata": {
+          "description": "Enter a secure root password"
+        }
+      }
+    },
+    "variables": {
+      "location": "[resourceGroup().location]",
+      "vmName": "kali-linux-vm",
+      "vmSize": "Standard_D4s_v3",
+      "vnetName": "kaliVnet",
+      "subnetName": "kaliSubnet",
+      "bastionSubnetName": "AzureBastionSubnet",
+      "ipName": "kaliPublicIP",
+      "nicName": "kaliNic",
+      "bastionIpName": "bastionPublicIP",
+      "bastionHostName": "kaliBastionHost",
+      "addressPrefix": "10.0.0.0/16",
+      "subnetPrefix": "10.0.0.0/24",
+      "bastionSubnetPrefix": "10.0.1.0/24",
+      "privateIP": "10.0.0.4"
+    },
+    "resources": [
+      {
+        "type": "Microsoft.Network/virtualNetworks",
+        "apiVersion": "2021-08-01",
+        "name": "[variables('vnetName')]",
+        "location": "[variables('location')]",
+        "properties": {
+          "addressSpace": {
+            "addressPrefixes": [
+              "[variables('addressPrefix')]"
+            ]
+          },
+          "subnets": [
+            {
+              "name": "[variables('subnetName')]",
+              "properties": {
+                "addressPrefix": "[variables('subnetPrefix')]"
+              }
+            },
+            {
+              "name": "[variables('bastionSubnetName')]",
+              "properties": {
+                "addressPrefix": "[variables('bastionSubnetPrefix')]"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Network/publicIPAddresses",
+        "apiVersion": "2021-08-01",
+        "name": "[variables('ipName')]",
+        "location": "[variables('location')]",
+        "properties": {
+          "publicIPAllocationMethod": "Dynamic"
+        }
+      },
+      {
+        "type": "Microsoft.Network/networkInterfaces",
+        "apiVersion": "2021-08-01",
+        "name": "[variables('nicName')]",
+        "location": "[variables('location')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]",
+          "[resourceId('Microsoft.Network/publicIPAddresses', variables('ipName'))]"
+        ],
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "ipconfig1",
+              "properties": {
+                "privateIPAllocationMethod": "Static",
+                "privateIPAddress": "[variables('privateIP')]",
+                "subnet": {
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('subnetName'))]"
+                },
+                "publicIPAddress": {
+                  "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('ipName'))]"
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "Microsoft.Compute/virtualMachines",
+        "apiVersion": "2021-07-01",
+        "name": "[variables('vmName')]",
+        "location": "[variables('location')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+        ],
+        "plan": {
+          "name": "kali-2024-3",
+          "publisher": "kali-linux",
+          "product": "kali"
+        },
+        "tags": {
+          "root": "[parameters('adminPassword')]"
+        },
+        "properties": {
+          "hardwareProfile": {
+            "vmSize": "[variables('vmSize')]"
+          },
+          "storageProfile": {
+            "imageReference": {
+              "publisher": "kali-linux",
+              "offer": "kali",
+              "sku": "kali-2024-3",
+              "version": "2024.3.0"
+            },
+            "osDisk": {
+              "createOption": "FromImage",
+              "managedDisk": {
+                "storageAccountType": "Premium_LRS"
+              },
+              "diskSizeGB": 128
+            }
+          },
+          "osProfile": {
+            "computerName": "[variables('vmName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]"
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces', variables('nicName'))]"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "type": "Microsoft.Network/publicIPAddresses",
+        "apiVersion": "2021-08-01",
+        "name": "[variables('bastionIpName')]",
+        "location": "[variables('location')]",
+        "sku": {
+          "name": "Standard"
+        },
+        "properties": {
+          "publicIPAllocationMethod": "Static"
+        }
+      },
+      {
+        "type": "Microsoft.Network/bastionHosts",
+        "apiVersion": "2021-08-01",
+        "name": "[variables('bastionHostName')]",
+        "location": "[variables('location')]",
+        "dependsOn": [
+          "[resourceId('Microsoft.Network/publicIPAddresses', variables('bastionIpName'))]",
+          "[resourceId('Microsoft.Network/virtualNetworks', variables('vnetName'))]"
+        ],
+        "sku": {
+          "name": "Premium"
+        },
+        "properties": {
+          "ipConfigurations": [
+            {
+              "name": "bastionIPConfig",
+              "properties": {
+                "subnet": {
+                  "id": "[resourceId('Microsoft.Network/virtualNetworks/subnets', variables('vnetName'), variables('bastionSubnetName'))]"
+                },
+                "publicIPAddress": {
+                  "id": "[resourceId('Microsoft.Network/publicIPAddresses', variables('bastionIpName'))]"
+                }
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+  
