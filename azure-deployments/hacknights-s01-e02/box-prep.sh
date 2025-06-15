@@ -30,4 +30,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt install xrdp
 systemctl enable xrdp
 systemctl start xrdp
 
-echo "[✔] Kali box is fully prepared with XFCE and XRDP!"
+echo "[*] Installing kali tools..."
+sudo apt install -y kali-linux-large
+
+echo "[✔] Kali box is fully prepared, enjoy"
