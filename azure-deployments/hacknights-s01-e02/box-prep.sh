@@ -25,6 +25,7 @@ echo "lightdm shared/default-x-display-manager select lightdm" | sudo debconf-se
 sudo DEBIAN_FRONTEND=noninteractive apt install -y kali-desktop-xfce lightdm
 
 echo "[*] Enabling and starting XRDP service..."
+sudo DEBIAN_FRONTEND=noninteractive apt install xrdp
 systemctl enable xrdp
 systemctl start xrdp
 
