@@ -41,10 +41,16 @@ sudo apt install -y ldap-utils
 sudo apt install -y crackmapexec
 sudo apt install -y netexec
 sudo apt install -y enum4linux
+sudo apt install -y evil-winrm
 wget https://gitlab.com/kalilinux/packages/wordlists/-/raw/kali/master/rockyou.txt.gz
 gunzip rockyou.txt.gz
 sudo apt install -y hashcat
 sudo apt install -y docker-compose
 sudo apt install -y docker.io
+sudo apt install -y ruby
+sudo apt install -y john
+
+echo "[*] Downloading relevant files..."
+
 
 echo "[✔] Kali box is fully prepared, enjoy"

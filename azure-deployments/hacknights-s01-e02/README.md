@@ -1,4 +1,4 @@
-# Hacknights S01E02 - Azure Deployment
+# Hacknights S01E02 - Night at the DC
 
 ## Instructions
 
