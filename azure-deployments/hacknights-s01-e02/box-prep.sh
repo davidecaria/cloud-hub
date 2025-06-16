@@ -32,5 +32,18 @@ systemctl start xrdp
 
 echo "[*] Installing kali tools..."
 sudo apt install -y kali-linux-large
+sudo apt install -y nmap
+sudo apt install -y smbclient
+sudo apt install -y impacket-scripts
+sudo apt install -y nslookup
+sudo apt install -y seclist
+sudo apt install -y ldapsearch
+sudo apt install -y crackmapexec
+sudo apt install -y netexec
+sudo apt install -y enum4linux
+sudo apt install -y rockyou
+sudo apt install -y hashcat
+sudo apt install -y docker-compose
+sudo apt install -y docker.io
 
 echo "[✔] Kali box is fully prepared, enjoy"
