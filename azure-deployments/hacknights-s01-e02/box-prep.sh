@@ -51,6 +51,7 @@ sudo apt install -y ruby
 sudo apt install -y john
 
 echo "[*] Downloading relevant files..."
-
+git clone https://github.com/carlospolop/PEASS-ng.git
+git clone https://github.com/PowerShellMafia/PowerSploit.git
 
 echo "[✔] Kali box is fully prepared, enjoy"
